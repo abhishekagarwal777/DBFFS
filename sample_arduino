@@ -1,0 +1,41 @@
+#include <Servo.h>
+
+// Initialize servo
+Servo myservo;
+
+// Initialize variables
+int pos = 0;
+bool flag = false;
+unsigned long previousMillis = 0;
+unsigned long interval = 2000;
+
+void setup() {
+  // Start serial communication at 9600 baud rate
+  Serial.begin(9600);
+
+  // Attach servo to pin 9
+  myservo.attach(9);
+}
+
+void loop() {
+  // Read serial input
+  if (Serial.available() > 0) {
+    char input = Serial.read();
+    
+    // Move servo if input is 'o'
+    if (input == 'o' && !flag) {
+      pos = 90;
+      flag = true;
+      myservo.write(pos);
+      previousMillis = millis();
+    }
+  }
+
+  // Move servo back to 0 degrees after 2 seconds
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval && flag) {
+    pos = 0;
+    flag = false;
+    myservo.write(pos);
+  }
+}
